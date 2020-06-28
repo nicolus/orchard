@@ -1,4 +1,4 @@
-<p align="center"><p style="text-align: center;"><img src="/resources/orchard.png" title="Orchard" alt="Orchard logo"></p></p>
+<p align="center"><img src="/resources/orchard.png" title="Orchard" alt="Orchard logo"></p>
 
 # Orchard
 
