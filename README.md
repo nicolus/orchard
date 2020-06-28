@@ -18,6 +18,8 @@ Orchard is a collection of provisioning script that should make it really fast a
 * Mailhog
 * SSL certificates
 
+It borrows a lot from laravel/settler and laravel/homestead (as in I copied everything I wanted from those two projects and then changed what I needed to make it work with WSL ^^)
+
 ---
 
 ## Requirements
@@ -63,7 +65,7 @@ You can now install the Root certificate located in `\\wsl$\Ubuntu\etc\apache2\s
 
 ## Usage
 
-Since Orchard is borrows a lot from Laravel Homestead, most of what you can do is very similar.
+Since Orchard borrows a lot from Laravel Homestead, most of what you can do is very similar.
 
 Serve a website from a directory (don't forget to make the domain point to 127.0.0.1 in your hosts file):
 ```
