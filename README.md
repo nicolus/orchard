@@ -4,7 +4,6 @@
 
 > A development LAMP Stack for WSL2
 
----
 
 ## What is this ?
 
