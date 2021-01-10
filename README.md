@@ -1,10 +1,9 @@
-<p align="center"><p style="text-align: center;"><img src="/resources/orchard.png" title="Orchard" alt="Orchard logo"></p>
+<p align="center"><img src="/resources/orchard.png" title="Orchard" alt="Orchard logo"></p>
 
 # Orchard
 
-> A development LAMP Stack for WSL2
+> A LAMP development Stack for WSL2
 
----
 
 ## What is this ?
 
@@ -18,6 +17,8 @@ Orchard is a collection of provisioning script that should make it really fast a
 * ngrok
 * Mailhog
 * SSL certificates
+
+It borrows a lot from laravel/settler and laravel/homestead (as in I copied everything I wanted from those two projects and then changed what I needed to make it work with WSL ^^)
 
 ---
 
@@ -64,7 +65,7 @@ You can now install the Root certificate located in `\\wsl$\Ubuntu\etc\apache2\s
 
 ## Usage
 
-Since Orchard is borrows a lot from Laravel Homestead, most of what you can do is very similar.
+Since Orchard borrows a lot from Laravel Homestead, most of what you can do is very similar.
 
 Serve a website from a directory (don't forget to make the domain point to 127.0.0.1 in your hosts file):
 ```
