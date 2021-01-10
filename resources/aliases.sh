@@ -20,18 +20,6 @@ function hostip() {
 	tail -1 /etc/resolv.conf | cut -d' ' -f2
 }
 
-function php70() {
-    sudo update-alternatives --set php /usr/bin/php7.0
-    sudo update-alternatives --set php-config /usr/bin/php-config7.0
-    sudo update-alternatives --set phpize /usr/bin/phpize7.0
-}
-
-function php71() {
-    sudo update-alternatives --set php /usr/bin/php7.1
-    sudo update-alternatives --set php-config /usr/bin/php-config7.1
-    sudo update-alternatives --set phpize /usr/bin/phpize7.1
-}
-
 function php72() {
     sudo update-alternatives --set php /usr/bin/php7.2
     sudo update-alternatives --set php-config /usr/bin/php-config7.2
@@ -50,6 +38,12 @@ function php74() {
     sudo update-alternatives --set phpize /usr/bin/phpize7.4
 }
 
+function php80() {
+    sudo update-alternatives --set php /usr/bin/php8.0
+    sudo update-alternatives --set php-config /usr/bin/php-config8.0
+    sudo update-alternatives --set phpize /usr/bin/phpize8.0
+}
+
 function serve() {
     if [[ "$1" && "$2" ]]
     then
@@ -61,7 +55,7 @@ function serve() {
     else
         echo "Error: missing required parameters."
         echo "Usage: "
-        echo "  serve domain path"
+        echo "  serve domain path [phpversion]"
     fi
 }
 

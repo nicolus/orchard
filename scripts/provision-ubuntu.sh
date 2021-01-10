@@ -39,7 +39,7 @@ sed -i "s/Listen 443/Listen 0.0.0.0:443/" /etc/apache2/ports.conf
 # Set My Timezone
 ln -sf /usr/share/zoneinfo/UTC /etc/localtime
 
-declare -a php_versions=("7.0", "7.1", "7.2", "7.3", "7.4")
+declare -a php_versions=("7.2" "7.3" "7.4" "8.0")
 for version in "${php_versions[@]}"
 do
 	apt-get install -y --allow-change-held-packages \
@@ -49,7 +49,7 @@ do
 	php${version}-soap php${version}-sqlite3 php${version}-tidy php${version}-xml php${version}-xmlrpc php${version}-xsl php${version}-zip \
 	php${version}-imagick php${version}-memcached php${version}-redis
 
-    # We're installing all php versions in order, so we'll be left with the latest one active :
+  # We're installing all php versions in order, so we'll be left with the latest one active :
 	update-alternatives --set php /usr/bin/php${version}
 	update-alternatives --set php-config /usr/bin/php-config${version}
 	update-alternatives --set phpize /usr/bin/phpize${version}
@@ -61,11 +61,8 @@ do
 	sed -i "s/;date.timezone.*/date.timezone = UTC/" /etc/php/${version}/cli/php.ini
 
 	# Setup Some PHP-FPM Options
-	echo "xdebug.remote_enable = 1" >> /etc/php/${version}/mods-available/xdebug.ini
-	echo "xdebug.remote_connect_back = 1" >> /etc/php/${version}/mods-available/xdebug.ini
-	echo "xdebug.remote_port = 9000" >> /etc/php/${version}/mods-available/xdebug.ini
-	echo "xdebug.max_nesting_level = 512" >> /etc/php/${version}/mods-available/xdebug.ini
-	echo "opcache.revalidate_freq = 0" >> /etc/php/${version}/mods-available/opcache.ini
+	echo "xdebug.mode = debug" >> /etc/php/${version}/mods-available/xdebug.ini
+	echo "xdebug.remote_port = 9003" >> /etc/php/${version}/mods-available/xdebug.ini
 
 	sed -i "s/error_reporting = .*/error_reporting = E_ALL/" /etc/php/${version}/fpm/php.ini
 	sed -i "s/display_errors = .*/display_errors = On/" /etc/php/${version}/fpm/php.ini
@@ -86,12 +83,6 @@ done
 # Install Composer
 curl -sS https://getcomposer.org/installer | php
 mv composer.phar /usr/local/bin/composer
-
-# Install prestissimo for parallel downloads
-su $me <<'EOF'
-/usr/local/bin/composer global require hirak/prestissimo
-EOF
-
 
 # Disable XDebug On The CLI
 phpdismod -s cli xdebug
@@ -114,9 +105,7 @@ sed -i '/^bind-address/s/bind-address.*=.*/bind-address = 0.0.0.0/' /etc/mysql/m
 mysql --user="root" --password="secret" -e "GRANT ALL ON *.* TO root@'%' IDENTIFIED BY 'secret' WITH GRANT OPTION;"
 service mysql restart
 
-
 mysql --user="root" --password="secret" -e "CREATE USER 'dbuser'@'%' IDENTIFIED BY 'secret';"
-mysql --user="root" --password="secret" -e "GRANT ALL ON *.* TO 'dbuser'@'%' IDENTIFIED BY 'secret' WITH GRANT OPTION;"
 mysql --user="root" --password="secret" -e "GRANT ALL ON *.* TO 'dbuser'@'%' IDENTIFIED BY 'secret' WITH GRANT OPTION;"
 mysql --user="root" --password="secret" -e "FLUSH PRIVILEGES;"
 mysql --user="root" --password="secret" -e "CREATE DATABASE db character set UTF8mb4 collate utf8mb4_bin;"
@@ -136,7 +125,7 @@ apt-get install -y redis-server memcached
 #service redis-server start
 
 # Install & Configure MailHog
-wget --quiet -O /usr/local/bin/mailhog https://github.com/mailhog/MailHog/releases/download/v1.0.0/MailHog_linux_amd64
+wget --quiet -O /usr/local/bin/mailhog https://github.com/mailhog/MailHog/releases/download/v1.0.1/MailHog_linux_amd64
 chmod +x /usr/local/bin/mailhog
 
 
