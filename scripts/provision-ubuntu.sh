@@ -11,30 +11,28 @@ export DEBIAN_FRONTEND=noninteractive
 apt-get update
 
 # Remove desktop components
-apt-get autoremove -y x11-utils x11-common
+apt-get autoremove -y x11-common
 
 # Update System Packages
 apt-get upgrade -y
 
 # Install Some PPAs
-apt-get install -y curl wget apt-transport-https software-properties-common
-sudo add-apt-repository ppa:ondrej/php -y
+add-apt-repository ppa:ondrej/php -y
 curl -sL https://deb.nodesource.com/setup_12.x | sudo -E bash -
 
 # Update Package Lists again to get packages from ondrej
 apt-get update
 
 # Install Some Basic Packages
-apt-get install -y build-essential dos2unix gcc git libmcrypt4 libpcre3-dev libpng-dev chrony unzip make \
-supervisor unattended-upgrades whois vim libnotify-bin pv cifs-utils mcrypt bash-completion imagemagick \
+apt-get install -y dos2unix git libmcrypt4 libpcre3-dev libpng-dev chrony unzip make \
+supervisor unattended-upgrades whois pv cifs-utils mcrypt imagemagick \
 apache2 libapache2-mod-fcgid
 
-#Enable apache modules
-a2enmod proxy proxy_http ssl
-# Listen on ipv4 instead of ipv6 :
-sed -i "s/Listen 80/Listen 0.0.0.0:80/" /etc/apache2/ports.conf
-sed -i "s/Listen 443/Listen 0.0.0.0:443/" /etc/apache2/ports.conf
+# Add Mutex to config to prevent auto restart issues
+echo 'Mutex posixsem' | sudo tee -a /etc/apache2/apache2.conf
 
+#Enable apache modules
+a2enmod proxy proxy_fcgi proxy_http ssl rewrite headers actions alias
 
 # Set My Timezone
 ln -sf /usr/share/zoneinfo/UTC /etc/localtime
@@ -44,10 +42,15 @@ for version in "${php_versions[@]}"
 do
 	apt-get install -y --allow-change-held-packages \
 	php${version} php${version}-bcmath php${version}-bz2 php${version}-cgi php${version}-cli php${version}-common php${version}-curl php${version}-dev \
-	php${version}-fpm php${version}-gd php${version}-gmp php${version}-imap php${version}-interbase php${version}-intl php${version}-json php${version}-xdebug \
+	php${version}-fpm php${version}-gd php${version}-gmp php${version}-imap php${version}-intl php${version}-xdebug \
 	php${version}-mbstring php${version}-mysql php${version}-opcache php${version}-readline \
-	php${version}-soap php${version}-sqlite3 php${version}-tidy php${version}-xml php${version}-xmlrpc php${version}-xsl php${version}-zip \
+	php${version}-sqlite3 php${version}-xml php${version}-xsl php${version}-zip \
 	php${version}-imagick php${version}-memcached php${version}-redis
+
+  # ext-json is bundled starting with php8.0, so we only require it for older versions
+	if [ $version != "8.0" ]; then
+	  apt-get install -y php${version}-json
+	fi
 
   # We're installing all php versions in order, so we'll be left with the latest one active :
 	update-alternatives --set php /usr/bin/php${version}
@@ -171,7 +174,7 @@ mkdir /var/www/orchard
 cp "$current_dir/../resources/welcome.php" "/var/www/orchard/index.php"
 bash /home/"$me"/scripts/create-certificate.sh orchard.test
 bash /home/"$me"/scripts/update-hosts.sh orchard.test
-bash /home/"$me"/scripts/apache.sh orchard.test /var/www/orchard/ 7.4
+bash /home/"$me"/scripts/apache.sh orchard.test /var/www/orchard/ 8.0
 
 source /home/"$me"/.bashrc
 
