@@ -75,7 +75,7 @@ then
     cnf="
         ${BASE_CNF}
         [ req_distinguished_name ]
-        O  = Vagrant
+        O  = Orchard
         C  = UN
         CN = Orchard $(hostname) Root CA
     "
@@ -103,7 +103,7 @@ then
     cnf="
         ${BASE_CNF}
         [ req_distinguished_name ]
-        O  = Vagrant
+        O  = Orchard
         C  = UN
         CN = $1
 
