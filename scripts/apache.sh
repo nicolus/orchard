@@ -25,12 +25,7 @@ block="<VirtualHost *:$http_port>
     CustomLog \${APACHE_LOG_DIR}/$domain-access.log combined
 </VirtualHost>
 
-# vim: syntax=apache ts=4 sw=4 sts=4 sr noet
-"
-
-
-
-blockssl="<VirtualHost *:$https_port>
+<VirtualHost *:$https_port>
   ServerAdmin webmaster@localhost
   ServerName $domain
   ServerAlias www.$domain
@@ -41,30 +36,27 @@ blockssl="<VirtualHost *:$https_port>
     Require all granted
   </Directory>
 
+  <FilesMatch \".+\.php$\">
+    SSLOptions +StdEnvVars
+    SetHandler \"proxy:unix:/run/php/php$php_version-fpm.sock|fcgi://localhost/\"
+  </FilesMatch>
+
   ErrorLog \${APACHE_LOG_DIR}/$domain-error.log
   CustomLog \${APACHE_LOG_DIR}/$domain-access.log combined
 
   SSLEngine on
   SSLCertificateFile      /etc/apache2/ssl/$domain.crt
   SSLCertificateKeyFile   /etc/apache2/ssl/$domain.key
-
-  <FilesMatch \"\.(cgi|shtml|phtml|php)$\">
-    SSLOptions +StdEnvVars
-  </FilesMatch>
-
-  <FilesMatch \".+\.php$\">
-    SetHandler \"proxy:unix:/run/php/php$php_version-fpm.sock|fcgi://localhost/\"
-  </FilesMatch>
 </VirtualHost>
-
-# vim: syntax=apache ts=4 sw=4 sts=4 sr noet
 "
 
 echo "$block" > "/etc/apache2/sites-available/$domain.conf"
-echo "$blockssl" > "/etc/apache2/sites-available/$domain-ssl.conf"
 
-sudo a2ensite "$domain-ssl.conf"
 sudo a2ensite "$domain.conf"
 
+# restart apache2 to take the new configurations into account
 service apache2 restart
-service php"$php_version"-fpm restart
+
+# Restart php-fpm ("restart" gives a failure if it was not started, this way looks better in the logs)
+service php"$php_version"-fpm stop
+service php"$php_version"-fpm start

@@ -7,10 +7,10 @@
 
 ## What is this ?
 
-Orchard is a collection of provisioning script that should make it really fast and easy to install a full LAMP stack on windows 10 with Ubuntu 20.04 on WSL2. It will install and configure the following :
+Orchard is a provisioning script that makes it really fast and easy to install a full LAMP stack on windows 10 with Ubuntu 20.04 on WSL2. It will install and configure the following :
 
 * Apache 2
-* PHP 7.0, 7.1, 7.2, 7.3 and 7.4
+* PHP 7.0, 7.1, 7.2, 7.3, 7.4 and 8.0
 * MySQL 8.0
 * Redis
 * Memcache
@@ -18,7 +18,7 @@ Orchard is a collection of provisioning script that should make it really fast a
 * Mailhog
 * SSL certificates
 
-It borrows a lot from laravel/settler and laravel/homestead (as in I copied everything I wanted from those two projects and then changed what I needed to make it work with WSL ^^)
+It borrows a lot from laravel/settler and laravel/homestead.
 
 ---
 
@@ -38,7 +38,10 @@ Install Ubuntu 20.04 with a username (not just `root`) and start it by typing `u
 Add the following lines to your hosts file (C:\Windows\System32\drivers\etc\hosts) so that you'll be able to access the default orchard websites, you can also add any site you know you'll want to create in orchard. :
 ```
 127.0.0.1 orchard.test
+::1 orchard.test
+
 127.0.0.1 mailhog.test
+::1 mailhog.test
 ```
 
 Navigate to where you downloaded the repo : 
@@ -68,26 +71,31 @@ You can now install the Root certificate located in `\\wsl$\Ubuntu\etc\apache2\s
 Since Orchard borrows a lot from Laravel Homestead, most of what you can do is very similar.
 
 Serve a website from a directory (don't forget to make the domain point to 127.0.0.1 in your hosts file):
-```
+```shell script
 $ serve /var/www/mysite mysite.test 
 ```
 
-It will use php 7.4 by default but you can specify an older version :
-```
+It will use php 8.0 by default, but you can specify an older version :
+```shell script
 $ serve /var/www/mysite mysite.test 7.4
 ```
 
-Launch a command line script with xdebug :
+Change the current php version used in CLI
+```shell script
+$ php74
 ```
+
+Launch a command line script with xdebug :
+```shell script
 $ xphp script.php
 ```
 Get the IP of the host machine from WSL :
-```
+```shell script
 $ hostip
 ```
 
 Share a site with ngrok :
-```
+```shell script
 $ share mysite.test
 ```
 

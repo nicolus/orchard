@@ -20,6 +20,19 @@ function hostip() {
 	tail -1 /etc/resolv.conf | cut -d' ' -f2
 }
 
+
+function php70() {
+    sudo update-alternatives --set php /usr/bin/php7.2
+    sudo update-alternatives --set php-config /usr/bin/php-config7.2
+    sudo update-alternatives --set phpize /usr/bin/phpize7.2
+}
+
+function php71() {
+    sudo update-alternatives --set php /usr/bin/php7.2
+    sudo update-alternatives --set php-config /usr/bin/php-config7.2
+    sudo update-alternatives --set phpize /usr/bin/phpize7.2
+}
+
 function php72() {
     sudo update-alternatives --set php /usr/bin/php7.2
     sudo update-alternatives --set php-config /usr/bin/php-config7.2
