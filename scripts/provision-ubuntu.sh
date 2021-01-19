@@ -133,8 +133,8 @@ service mysql restart
 
 # And allow root to connect from anywhere
 mysql --user="root" -e "UPDATE mysql.user SET host='%' WHERE user='root';"
-mysql --user="root" -e "ALTER USER 'root'@'%' IDENTIFIED WITH mysql_native_password BY ''"
 mysql --user="root" -e "FLUSH PRIVILEGES"
+mysql --user="root" -e "ALTER USER 'root'@'%' IDENTIFIED WITH mysql_native_password BY ''"
 
 # Create the Laravel database :
 mysql --user="root" -e "CREATE DATABASE laravel character set UTF8mb4 collate utf8mb4_bin;"
@@ -216,7 +216,7 @@ bash /home/"$me"/scripts/apache.sh orchard.test /var/www/orchard/ 8.0
 
 # Make user part of www-data group and owner of /var/www so that we can set permissions to 775
 # on directories that need to be writable by apache (like ./storage or ./bootstrap/cache)
-usermod -a -G www-data "$me"
+usermod -g www-data "$me"
 chown -R "$me:www-data" /var/www
 
 /mnt/c/Windows/explorer.exe http://orchard.test
