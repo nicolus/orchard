@@ -60,3 +60,7 @@ service apache2 restart
 # Restart php-fpm ("restart" gives a failure if it was not started, this way looks better in the logs)
 service php"$php_version"-fpm stop
 service php"$php_version"-fpm start
+
+echo "You will need to add these lines to your hosts file to access the site :"
+echo "127.0.0.1 $domain"
+echo "::1 $domain"
