@@ -3,6 +3,9 @@
 ## You can add or remove php versions here :
 declare -a php_versions=("7.0" "7.1" "7.2" "7.3" "7.4" "8.0")
 
+## You can add or remove databases here :
+declare -a databases=("laravel")
+
 declare me=$1
 declare current_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && /bin/pwd)"
 declare host_ip="$(tail -1 /etc/resolv.conf | cut -d' ' -f2)"
@@ -67,51 +70,56 @@ do
 	  apt-get install -y php${version}-json
 	fi
 
-  # We're installing all php versions in order, so we'll be left with the latest one active :
-	update-alternatives --set php /usr/bin/php${version}
-	update-alternatives --set php-config /usr/bin/php-config${version}
-	update-alternatives --set phpize /usr/bin/phpize${version}
+  # Install mcrypt for php 7.0 and 7.1
+	if [ $version = "7.0" ] || [ $version = "7.1" ]; then
+    apt-get install -y php${version}-mcrypt
+  fi
 
 	# Set Some PHP CLI Settings by using search/replace with sed
-	sed -i "s/error_reporting = .*/error_reporting = E_ALL/" /etc/php/${version}/cli/php.ini
-	sed -i "s/display_errors = .*/display_errors = On/" /etc/php/${version}/cli/php.ini
-	sed -i "s/memory_limit = .*/memory_limit = 512M/" /etc/php/${version}/cli/php.ini
-	sed -i "s/;date.timezone.*/date.timezone = UTC/" /etc/php/${version}/cli/php.ini
+	sed -i "s/error_reporting = .*/error_reporting = E_ALL/" "/etc/php/$version/cli/php.ini"
+	sed -i "s/display_errors = .*/display_errors = On/" "etc/php/$version/cli/php.ini"
+	sed -i "s/memory_limit = .*/memory_limit = 512M/" "/etc/php/$version/cli/php.ini"
+	sed -i "s/;date.timezone.*/date.timezone = UTC/" "/etc/php/$version/cli/php.ini"
 
-	# Setup Some PHP-FPM Options
-	if [ $version = "7.0" ] || [ $version = "7.1" ]  # Xdebug 2 is used for php 7/7.1
-	then
-    echo "xdebug.remote_enable = 1" >> /etc/php/${version}/mods-available/xdebug.ini
-    echo "xdebug.remote_connect_back = 1" >> /etc/php/${version}/mods-available/xdebug.ini
-    echo "xdebug.remote_port = 9003" >> /etc/php/${version}/mods-available/xdebug.ini
+	# Xdebug configuration :
+	if [ $version = "7.0" ] || [ $version = "7.1" ]; then  # Xdebug 2 is used for php 7/7.1
+    echo "xdebug.remote_enable = 1" >> "/etc/php/$version/mods-available/xdebug.ini"
+    echo "xdebug.remote_connect_back = 1" >> "/etc/php/$version/mods-available/xdebug.ini"
+    echo "xdebug.remote_port = 9003" >> "/etc/php/$version/mods-available/xdebug.ini"
 	else # Xdebug 3 for php >= 7.2
-    echo "xdebug.mode = debug" >> /etc/php/${version}/mods-available/xdebug.ini
-    echo "xdebug.client_host = ${host_ip}" >> /etc/php/${version}/mods-available/xdebug.ini
-    echo "xdebug.remote_port = 9003" >> /etc/php/${version}/mods-available/xdebug.ini
+    echo "xdebug.mode = debug" >> "/etc/php/$version/mods-available/xdebug.ini"
+    echo "xdebug.client_host = $host_ip" >> "/etc/php/$version/mods-available/xdebug.ini"
+    echo "xdebug.remote_port = 9003" >> "/etc/php/$version/mods-available/xdebug.ini"
 	fi
 
-	echo "xdebug.max_nesting_level = 512" >> /etc/php/${version}/mods-available/xdebug.ini
+	echo "xdebug.max_nesting_level = 512" >> "/etc/php/$version/mods-available/xdebug.ini"
 
-	sed -i "s/error_reporting = .*/error_reporting = E_ALL/" /etc/php/${version}/fpm/php.ini
-	sed -i "s/display_errors = .*/display_errors = On/" /etc/php/${version}/fpm/php.ini
-	sed -i "s/memory_limit = .*/memory_limit = 512M/" /etc/php/${version}/fpm/php.ini
-	sed -i "s/upload_max_filesize = .*/upload_max_filesize = 100M/" /etc/php/${version}/fpm/php.ini
-	sed -i "s/post_max_size = .*/post_max_size = 100M/" /etc/php/${version}/fpm/php.ini
-	sed -i "s/;date.timezone.*/date.timezone = UTC/" /etc/php/${version}/fpm/php.ini
+	sed -i "s/error_reporting = .*/error_reporting = E_ALL/" "/etc/php/$version/fpm/php.ini"
+	sed -i "s/display_errors = .*/display_errors = On/" "/etc/php/$version/fpm/php.ini"
+	sed -i "s/memory_limit = .*/memory_limit = 512M/" "/etc/php/$version/fpm/php.ini"
+	sed -i "s/upload_max_filesize = .*/upload_max_filesize = 100M/" "/etc/php/$version/fpm/php.ini"
+	sed -i "s/post_max_size = .*/post_max_size = 100M/" "/etc/php/$version/fpm/php.ini"
+	sed -i "s/;date.timezone.*/date.timezone = UTC/" "/etc/php/$version/fpm/php.ini"
 
   # Make php use the system ca certificates so it won't complain about untrusted certificates :
-	echo "[openssl]" >> /etc/php/${version}/fpm/php.ini
-	echo "openssl.cainfo = /etc/ssl/certs/ca-certificates.crt" >> /etc/php/${version}/fpm/php.ini
+	echo "[openssl]" >> "/etc/php/$version/fpm/php.ini"
+	echo "openssl.cainfo = /etc/ssl/certs/ca-certificates.crt" >> "/etc/php/$version/fpm/php.ini"
 
-	echo "[curl]" >> /etc/php/${version}/fpm/php.ini
-	echo "curl.cainfo = /etc/ssl/certs/ca-certificates.crt" >> /etc/php/${version}/fpm/php.ini
+	echo "[curl]" >> "/etc/php/$version/fpm/php.ini"
+	echo "curl.cainfo = /etc/ssl/certs/ca-certificates.crt" >> "/etc/php/$version/fpm/php.ini"
+
+	# set php, php-config, phpize to aliases of phpX.Y
+	# We're installing all php versions in order, so we'll be left with the latest one active :
+	update-alternatives --set php "/usr/bin/php$version"
+	update-alternatives --set php-config "/usr/bin/php-config$version"
+	update-alternatives --set phpize "/usr/bin/phpize$version"
 done
 
 # Install Composer
 curl -sS https://getcomposer.org/installer | php
 mv composer.phar /usr/local/bin/composer
 
-# Disable XDebug On The CLI
+# Disable XDebug On The CLI (can still be used with 'xphp')
 phpdismod -s cli xdebug
 
 # Add Composer Global Bin To Path
@@ -136,13 +144,21 @@ mysql --user="root" -e "UPDATE mysql.user SET host='%' WHERE user='root';"
 mysql --user="root" -e "FLUSH PRIVILEGES"
 mysql --user="root" -e "ALTER USER 'root'@'%' IDENTIFIED WITH mysql_native_password BY ''"
 
-# Create the Laravel database :
-mysql --user="root" -e "CREATE DATABASE laravel character set UTF8mb4 collate utf8mb4_bin;"
+# Create the databases :
+for db in "${databases[@]}"; do
+  mysql --user="root" -e "CREATE DATABASE $db character set UTF8mb4 collate utf8mb4_unicode_ci;"
+done
 
 tee "/home/$me/.my.cnf" <<EOL
 [mysqld]
 character-set-server=utf8mb4
-collation-server=utf8mb4_bin
+collation-server=utf8mb4_unicode_ci
+
+# Disable performance schema and binary logs. We usually don't need them for development
+# And disabling them improves performance and memory condumption
+performance_schema=OFF
+disable_log_bin
+
 EOL
 
 # Add Timezone Support To MySQL
