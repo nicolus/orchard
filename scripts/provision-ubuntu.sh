@@ -89,7 +89,7 @@ do
 	else # Xdebug 3 for php >= 7.2
     echo "xdebug.mode = debug" >> "/etc/php/$version/mods-available/xdebug.ini"
     echo "xdebug.client_host = $host_ip" >> "/etc/php/$version/mods-available/xdebug.ini"
-    echo "xdebug.remote_port = 9003" >> "/etc/php/$version/mods-available/xdebug.ini"
+    echo "xdebug.client_port = 9003" >> "/etc/php/$version/mods-available/xdebug.ini"
 	fi
 
 	echo "xdebug.max_nesting_level = 512" >> "/etc/php/$version/mods-available/xdebug.ini"
