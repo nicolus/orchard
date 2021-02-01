@@ -84,7 +84,7 @@ do
 	# Xdebug configuration :
 	if [ $version = "7.0" ] || [ $version = "7.1" ]; then  # Xdebug 2 is used for php 7/7.1
     echo "xdebug.remote_enable = 1" >> "/etc/php/$version/mods-available/xdebug.ini"
-    echo "xdebug.remote_connect_back = 1" >> "/etc/php/$version/mods-available/xdebug.ini"
+    echo "xdebug.remote_host = $host_ip" >> "/etc/php/$version/mods-available/xdebug.ini"
     echo "xdebug.remote_port = 9003" >> "/etc/php/$version/mods-available/xdebug.ini"
 	else # Xdebug 3 for php >= 7.2
     echo "xdebug.mode = debug" >> "/etc/php/$version/mods-available/xdebug.ini"
