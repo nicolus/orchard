@@ -132,12 +132,31 @@ printf "\nPATH=\"$(sudo su - $me -c 'composer config -g home 2>/dev/null')/vendo
 # Install MySQL
 apt-get install -y mysql-server
 
+service mysql stop
+
 # Configure MySQL Password Lifetime to never expire
 echo "default_password_lifetime = 0" >> /etc/mysql/mysql.conf.d/mysqld.cnf
 
 # Configure MySQL Remote Access to allow access from anywhere
 sed -i '/^bind-address/s/bind-address.*=.*/bind-address = 0.0.0.0/' /etc/mysql/mysql.conf.d/mysqld.cnf
-service mysql restart
+
+echo "
+character-set-server=utf8mb4
+collation-server=utf8mb4_unicode_ci
+
+# Use legacy authentication plugin for better compatibility :
+default-authentication-plugin=mysql_native_password
+
+# Disable performance schema and binary logs. We usually don't need them for development
+# And disabling them improves performance and memory consumption
+performance_schema=OFF
+disable_log_bin
+" >> /etc/mysql/mysql.conf.d/mysqld.cnf
+
+# Give a home directory to "mysql" user to get rid of an annoying warning that "/nonexistent" doesn't exist
+sudo usermod -d /var/lib/mysql/ mysql
+
+service mysql start
 
 # And allow root to connect from anywhere
 mysql --user="root" -e "UPDATE mysql.user SET host='%' WHERE user='root';"
@@ -149,23 +168,10 @@ for db in "${databases[@]}"; do
   mysql --user="root" -e "CREATE DATABASE $db character set UTF8mb4 collate utf8mb4_unicode_ci;"
 done
 
-tee "/home/$me/.my.cnf" <<EOL
-[mysqld]
-character-set-server=utf8mb4
-collation-server=utf8mb4_unicode_ci
-
-# Disable performance schema and binary logs. We usually don't need them for development
-# And disabling them improves performance and memory condumption
-performance_schema=OFF
-disable_log_bin
-
-EOL
 
 # Add Timezone Support To MySQL
 mysql_tzinfo_to_sql /usr/share/zoneinfo | mysql --user=root
 
-# Give a home directory to "mysql" user to get rid of an annoying warning that "/nonexistent" doesn't exist
-sudo usermod -d /var/lib/mysql/ mysql
 
 ####################################
 #                MISC              #
