@@ -87,8 +87,8 @@ function share() {
 }
 
 function xphp() {
-    (php -m | grep -q xdebug)
-    if [[ $? -eq 0 ]]
+
+    if (php -m | grep -q xdebug)
     then
         XDEBUG_ENABLED=true
     else
@@ -99,10 +99,20 @@ function xphp() {
 
     HOST_IP=hostip
 
-    php \
+    if (php -v | grep -q "PHP 7.[01]")
+    then
+      # php 7.0 or 7.1 => Xdebug 2
+      php \
         -dxdebug.remote_host=${HOST_IP} \
         -dxdebug.remote_autostart=1 \
         "$@"
+    else
+      # php 7.2 or higher => Xdebug 3
+      php \
+        -dxdebug.client_host=${HOST_IP} \
+        -dxdebug.start_with_request=1 \
+        "$@"
+    fi
 
     if ! $XDEBUG_ENABLED; then xoff; fi
 }
