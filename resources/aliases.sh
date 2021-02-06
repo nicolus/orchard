@@ -63,7 +63,7 @@ function serve() {
         me=$(whoami)
         sudo bash /home/"${me}"/scripts/create-certificate.sh "$1"
         sudo dos2unix /home/"${me}"/scripts/apache.sh
-        sudo bash /home/"${me}"/scripts/apache.sh "$1" "$2" "${3:-7.4}"
+        sudo bash /home/"${me}"/scripts/apache.sh "$1" "$2" "${3:-8.0}"
         sudo bash /home/"${me}"/scripts/update-hosts.sh "$1"
     else
         echo "Error: missing required parameters."
