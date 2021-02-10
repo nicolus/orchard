@@ -115,12 +115,15 @@ do
 	update-alternatives --set phpize "/usr/bin/phpize$version"
 done
 
+# Disable XDebug On The CLI (can still be used with 'xphp')
+phpdismod -s cli xdebug
+
+# Set the servername in PHPIDECONFIG environment variable to enable path mapping in the IDE :
+echo "export PHP_IDE_CONFIG=\"serverName=$(hostname)\"" >> "/home/$me/.profile"
+
 # Install Composer
 curl -sS https://getcomposer.org/installer | php
 mv composer.phar /usr/local/bin/composer
-
-# Disable XDebug On The CLI (can still be used with 'xphp')
-phpdismod -s cli xdebug
 
 # Add Composer Global Bin To Path
 printf "\nPATH=\"$(sudo su - $me -c 'composer config -g home 2>/dev/null')/vendor/bin:\$PATH\"\n" | tee -a "/home/$me/.profile"
