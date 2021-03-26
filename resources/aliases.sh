@@ -97,7 +97,7 @@ function xphp() {
 
     if ! $XDEBUG_ENABLED; then xon; fi
 
-    HOST_IP=hostip
+    HOST_IP=$(hostip)
 
     if (php -v | grep -q "PHP 7.[01]")
     then
