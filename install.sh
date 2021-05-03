@@ -7,4 +7,4 @@ sudo bash ./scripts/provision-ubuntu.sh ${me}
 
 echo "Installation finished !"
 echo ""
-echo "Please run 'source ~/.bashrc' before using Orchard."
+echo "Please 'exit' and reconnect so that we can reload your .bashrc"
