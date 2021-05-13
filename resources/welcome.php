@@ -3,7 +3,8 @@ if (isset($_GET['ca'])) {
     $hostname = gethostname();
     $caname = "ca.orchard.$hostname.crt";
     header("Content-Disposition: attachment; filename=\"$caname\"");
-    echo file_get_contents("/etc/apache2/ssl/$caname");
+    header("Content-Type: application/x-x509-ca-cert");
+    readfile("/etc/apache2/ssl/$caname");
     exit;
 }
 
