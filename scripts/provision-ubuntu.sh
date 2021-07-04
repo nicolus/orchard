@@ -50,7 +50,6 @@ echo 'Mutex posixsem' | sudo tee -a /etc/apache2/apache2.conf
 
 # Set the apache user as the current user for easier right management (don't do that in production !)
 sed -i "s/APACHE_RUN_USER=.*/APACHE_RUN_USER=$me/" "/etc/apache2/envvars"
-APACHE_RUN_USER=www-data
 
 #Enable apache modules
 a2enmod proxy proxy_fcgi proxy_http ssl rewrite headers actions alias
