@@ -1,7 +1,10 @@
 #!/usr/bin/env bash
 
 ## You can add or remove php versions here :
-declare -a php_versions=("7.0" "7.1" "7.2" "7.3" "7.4" "8.0")
+declare -a php_versions=("8.0")
+
+## mysql version, can be "5.7" or "8"
+declare mysql_version="5.7"
 
 ## You can add or remove databases here :
 declare -a databases=("laravel")
@@ -140,8 +143,32 @@ printf "\nPATH=\"$(sudo su - $me -c 'composer config -g home 2>/dev/null')/vendo
 ####################################
 #                MYSQL             #
 ####################################
-# Install MySQL
-apt-get install -y mysql-server
+if [ $mysql_version = "8" ]; then
+  # Install MySQL
+  apt-get install -y mysql-server
+fi
+
+if [ $mysql_version = "5.7" ]; then
+  unset DEBIAN_FRONTEND # doesn't work with noninteractive frontend for some reason
+  #W e'll still set the values, but the user will have to select "OK"
+  echo mysql-apt-config mysql-apt-config/unsupported-platform select "ubuntu bionic" | debconf-set-selections
+  echo mysql-apt-config mysql-apt-config/select-tools select "Disabled" | debconf-set-selections
+  echo mysql-apt-config mysql-apt-config/enable-repo select "mysql-5.7" | debconf-set-selections
+  echo mysql-apt-config mysql-apt-config/select-server select "mysql-5.7" | debconf-set-selections
+  echo mysql-apt-config mysql-apt-config/select-product select "Ok" | debconf-set-selections
+
+  # get mysql-apt-config 0.8.12. More recent versions install only MySQL 8.0
+  wget https://dev.mysql.com/get/mysql-apt-config_0.8.12-1_all.deb
+  dpkg -i mysql-apt-config_0.8.12-1_all.deb
+  apt-get update
+
+  # Reenable noninteractive frontent
+  export DEBIAN_FRONTEND=noninteractive
+  # Install versions 5.7
+  apt install -y -f mysql-client=5.7* mysql-community-server=5.7* mysql-server=5.7*
+  #And hold the package so that it won't install 8.0 on the first upate/upgrade
+  apt-mark hold mysql-client mysql-server mysql-community-server
+fi
 
 service mysql stop
 
@@ -165,7 +192,7 @@ disable_log_bin
 " >> /etc/mysql/mysql.conf.d/mysqld.cnf
 
 # Give a home directory to "mysql" user to get rid of an annoying warning that "/nonexistent" doesn't exist
-sudo usermod -d /var/lib/mysql/ mysql
+usermod -d /var/lib/mysql/ mysql
 
 service mysql start
 
@@ -182,6 +209,8 @@ done
 
 # Add Timezone Support To MySQL
 mysql_tzinfo_to_sql /usr/share/zoneinfo | mysql --user=root
+
+
 
 
 ####################################
@@ -209,7 +238,7 @@ chmod +x /usr/local/bin/mailhog
 cp "$current_dir/../resources/mailhog.conf" "/etc/supervisor/conf.d/"
 
 #start supervisor :
-sudo service supervisor start
+service supervisor start
 
 # Install ngrok
 wget https://bin.equinox.io/c/4VmDzA7iaHb/ngrok-stable-linux-amd64.zip
