@@ -48,6 +48,10 @@ apt-get install -y apache2 libapache2-mod-fcgid
 # Add Mutex to config to prevent auto restart issues
 echo 'Mutex posixsem' | sudo tee -a /etc/apache2/apache2.conf
 
+# Set the apache user as the current user for easier right management (don't do that in production !)
+sed -i "s/APACHE_RUN_USER=.*/APACHE_RUN_USER=$me/" "/etc/apache2/envvars"
+APACHE_RUN_USER=www-data
+
 #Enable apache modules
 a2enmod proxy proxy_fcgi proxy_http ssl rewrite headers actions alias
 
@@ -80,6 +84,10 @@ do
 	sed -i "s/display_errors = .*/display_errors = On/" "etc/php/$version/cli/php.ini"
 	sed -i "s/memory_limit = .*/memory_limit = 512M/" "/etc/php/$version/cli/php.ini"
 	sed -i "s/;date.timezone.*/date.timezone = UTC/" "/etc/php/$version/cli/php.ini"
+
+	# Set php-fpm user as current user so CLI and web scripts will have the same user :
+  sed -i "s/listen\.owner.*/listen.owner = $me/" "/etc/php/$version/fpm/pool.d/www.conf"
+  sed -i "s/;listen\.mode.*/listen.mode = 0666/" "/etc/php/$version/fpm/pool.d/www.conf"
 
 	# Xdebug configuration :
 	if [ $version = "7.0" ] || [ $version = "7.1" ]; then  # Xdebug 2 is used for php 7/7.1
