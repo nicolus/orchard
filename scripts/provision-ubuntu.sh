@@ -86,6 +86,7 @@ do
 	sed -i "s/;date.timezone.*/date.timezone = UTC/" "/etc/php/$version/cli/php.ini"
 
 	# Set php-fpm user as current user so CLI and web scripts will have the same user :
+  sed -i "s/user = .*/user =  $me/" "/etc/php/$version/fpm/pool.d/www.conf"
   sed -i "s/listen\.owner.*/listen.owner = $me/" "/etc/php/$version/fpm/pool.d/www.conf"
   sed -i "s/;listen\.mode.*/listen.mode = 0666/" "/etc/php/$version/fpm/pool.d/www.conf"
 
