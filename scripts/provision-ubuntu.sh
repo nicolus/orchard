@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 ## You can add or remove php versions here :
-declare -a php_versions=("8.0")
+declare -a php_versions=("7.0" "7.2" "7.4" "8.0")
 
 ## mysql version, can be "5.7" or "8"
 declare mysql_version="5.7"
