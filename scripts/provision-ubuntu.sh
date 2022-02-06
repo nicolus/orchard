@@ -1,10 +1,10 @@
 #!/usr/bin/env bash
 
-## You can add or remove php versions here :
-declare -a php_versions=("8.0")
+## You can add older versions here :
+declare -a php_versions=("8.1")
 
 ## mysql version, can be "5.7" or "8"
-declare mysql_version="5.7"
+declare mysql_version="8"
 
 ## You can add or remove databases here :
 declare -a databases=("laravel")
@@ -29,7 +29,7 @@ apt-get upgrade -y
 
 # Install Some PPAs
 add-apt-repository ppa:ondrej/php -y
-curl -sL https://deb.nodesource.com/setup_12.x | sudo -E bash -
+curl -sL https://deb.nodesource.com/setup_16.x | sudo -E bash -
 
 # Update Package Lists again to get packages from ondrej and node repos
 apt-get update -y
@@ -72,12 +72,12 @@ do
 	php${version}-imagick php${version}-memcached php${version}-redis
 
   # ext-json is bundled starting with php8.0, so we only require it for older versions
-	if [ $version != "8.0" ]; then
+	if [ "$version" != "8.0" ] && [ "$version" != "8.1" ]; then
 	  apt-get install -y php${version}-json
 	fi
 
   # Install mcrypt for php 7.0 and 7.1
-	if [ $version = "7.0" ] || [ $version = "7.1" ]; then
+	if [ "$version" = "7.0" ] || [ "$version" = "7.1" ]; then
     apt-get install -y php${version}-mcrypt
   fi
 
@@ -93,7 +93,7 @@ do
   sed -i "s/;listen\.mode.*/listen.mode = 0666/" "/etc/php/$version/fpm/pool.d/www.conf"
 
 	# Xdebug configuration :
-	if [ $version = "7.0" ] || [ $version = "7.1" ]; then  # Xdebug 2 is used for php 7/7.1
+	if [ "$version" = "7.0" ] || [ "$version" = "7.1" ]; then  # Xdebug 2 is used for php 7/7.1
     echo "xdebug.remote_enable = 1" >> "/etc/php/$version/mods-available/xdebug.ini"
     echo "xdebug.remote_host = $host_ip" >> "/etc/php/$version/mods-available/xdebug.ini"
     echo "xdebug.remote_port = 9003" >> "/etc/php/$version/mods-available/xdebug.ini"
@@ -150,7 +150,7 @@ fi
 
 if [ $mysql_version = "5.7" ]; then
   unset DEBIAN_FRONTEND # doesn't work with noninteractive frontend for some reason
-  #W e'll still set the values, but the user will have to select "OK"
+  #We'll still set the values, but the user will have to select "OK"
   echo mysql-apt-config mysql-apt-config/unsupported-platform select "ubuntu bionic" | debconf-set-selections
   echo mysql-apt-config mysql-apt-config/select-tools select "Disabled" | debconf-set-selections
   echo mysql-apt-config mysql-apt-config/enable-repo select "mysql-5.7" | debconf-set-selections
@@ -277,7 +277,7 @@ mkdir /var/www/orchard
 cp "$current_dir/../resources/welcome.php" "/var/www/orchard/index.php"
 bash /home/"$me"/scripts/create-certificate.sh orchard.test
 bash /home/"$me"/scripts/update-hosts.sh orchard.test
-bash /home/"$me"/scripts/apache.sh orchard.test /var/www/orchard/ 8.0
+bash /home/"$me"/scripts/apache.sh orchard.test /var/www/orchard/ 8.1
 
 # Make user part of www-data group and owner of /var/www so that we can set permissions to 775
 # on directories that need to be writable by apache (like ./storage or ./bootstrap/cache)

@@ -10,7 +10,7 @@
 Orchard is a provisioning script that makes it really fast and easy to install a full LAMP stack on windows 10 with Ubuntu 20.04 on WSL2. It will install and configure the following :
 
 * Apache 2
-* PHP 7.0, 7.1, 7.2, 7.3, 7.4 and 8.0
+* PHP 7.0, 7.1, 7.2, 7.3, 7.4, 8.0 and 8.1
 * MySQL 8.0
 * Redis
 * Memcache
@@ -44,7 +44,7 @@ Add the following lines to your hosts file (C:\Windows\System32\drivers\etc\host
 ::1 mailhog.test
 ```
 
-Navigate to where you downloaded the repo : 
+Inside Ubuntu, navigate to where you downloaded the repo : 
 ```shell script
 $ cd /mnt/c/orchard
 ```
@@ -75,7 +75,7 @@ Serve a website from a directory (don't forget to make the domain point to 127.0
 $ serve /var/www/mysite mysite.test 
 ```
 
-It will use php 8.0 by default, but you can specify an older version :
+It will use php 8.1 by default, but you can specify an older version :
 ```shell script
 $ serve /var/www/mysite mysite.test 7.4
 ```

@@ -58,13 +58,19 @@ function php80() {
     sudo update-alternatives --set phpize /usr/bin/phpize8.0
 }
 
+function php81() {
+    sudo update-alternatives --set php /usr/bin/php8.1
+    sudo update-alternatives --set php-config /usr/bin/php-config8.1
+    sudo update-alternatives --set phpize /usr/bin/phpize8.1
+}
+
 function serve() {
     if [[ "$1" && "$2" ]]
     then
         me=$(whoami)
         sudo bash /home/"${me}"/scripts/create-certificate.sh "$1"
         sudo dos2unix /home/"${me}"/scripts/apache.sh
-        sudo bash /home/"${me}"/scripts/apache.sh "$1" "$2" "${3:-8.0}"
+        sudo bash /home/"${me}"/scripts/apache.sh "$1" "$2" "${3:-8.1}"
         sudo bash /home/"${me}"/scripts/update-hosts.sh "$1"
     else
         echo "Error: missing required parameters."
