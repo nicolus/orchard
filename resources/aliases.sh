@@ -9,8 +9,8 @@ alias tkr='php artisan tinker'
 alias phpspec='vendor/bin/phpspec'
 alias phpunit='vendor/bin/phpunit'
 
-alias xoff='sudo phpdismod xdebug'
-alias xon='sudo phpenmod xdebug'
+alias xoff='sudo phpdismod xdebug && php-restart'
+alias xon='sudo phpenmod xdebug && php-restart'
 
 
 function artisan() {
@@ -21,6 +21,12 @@ function hostip() {
 	tail -1 /etc/resolv.conf | cut -d' ' -f2
 }
 
+function php-restart() {
+  for dir in "/etc/php/"* ; do
+      version=$(basename "$dir")
+      sudo service php"$version"-fpm restart
+  done
+}
 
 function php70() {
     sudo update-alternatives --set php /usr/bin/php7.0
@@ -63,6 +69,7 @@ function php81() {
     sudo update-alternatives --set php-config /usr/bin/php-config8.1
     sudo update-alternatives --set phpize /usr/bin/phpize8.1
 }
+
 
 function serve() {
     if [[ "$1" && "$2" ]]
