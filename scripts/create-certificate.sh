@@ -93,34 +93,31 @@ then
         update-ca-certificates
 fi
 
-# Only generate a certificate if there isn't one already there.
-if [ ! -f $PATH_CNF ] || [ ! -f $PATH_KEY ] || [ ! -f $PATH_CRT ]
-then
-    # Uncomment the global 'copy_extentions' OpenSSL option to ensure the SANs are copied into the certificate.
-    sed -i '/copy_extensions\ =\ copy/s/^#\ //g' /etc/ssl/openssl.cnf
 
-    # Generate an OpenSSL configuration file specifically for this certificate.
-    cnf="
-        ${BASE_CNF}
-        [ req_distinguished_name ]
-        O  = Orchard
-        C  = UN
-        CN = $1
+# Uncomment the global 'copy_extentions' OpenSSL option to ensure the SANs are copied into the certificate.
+sed -i '/copy_extensions\ =\ copy/s/^#\ //g' /etc/ssl/openssl.cnf
 
-        [ alternate_names ]
-        DNS.1 = $1
-        DNS.2 = *.$1
-    "
-    echo "$cnf" > $PATH_CNF
+# Generate an OpenSSL configuration file specifically for this certificate.
+cnf="
+    ${BASE_CNF}
+    [ req_distinguished_name ]
+    O  = Orchard
+    C  = UN
+    CN = $1
 
-    # Finally, generate the private key and certificate signed with the Orchard $(hostname) Root CA.
-    openssl genrsa -out "$PATH_KEY" 2048 2>/dev/null
-    openssl req -config "$PATH_CNF" \
-        -key "$PATH_KEY" \
-        -new -sha256 -out "$PATH_CSR" 2>/dev/null
-    openssl x509 -req -extfile "$PATH_CNF" \
-        -extensions server_cert -days 365 -sha256 \
-        -in "$PATH_CSR" \
-        -CA "$PATH_ROOT_CRT" -CAkey "$PATH_ROOT_KEY" -CAcreateserial \
-        -out "$PATH_CRT" 2>/dev/null
-fi
+    [ alternate_names ]
+    DNS.1 = $1
+    DNS.2 = *.$1
+"
+echo "$cnf" > $PATH_CNF
+
+# Finally, generate the private key and certificate signed with the Orchard $(hostname) Root CA.
+openssl genrsa -out "$PATH_KEY" 2048 2>/dev/null
+openssl req -config "$PATH_CNF" \
+    -key "$PATH_KEY" \
+    -new -sha256 -out "$PATH_CSR" 2>/dev/null
+openssl x509 -req -extfile "$PATH_CNF" \
+    -extensions server_cert -days 365 -sha256 \
+    -in "$PATH_CSR" \
+    -CA "$PATH_ROOT_CRT" -CAkey "$PATH_ROOT_KEY" -CAcreateserial \
+    -out "$PATH_CRT" 2>/dev/null

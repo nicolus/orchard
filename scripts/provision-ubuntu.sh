@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
 
-## You can add older versions here :
+## You can add older/newer PHP versions here :
 declare -a php_versions=("8.1")
 
-## mysql version, can be "5.7" or "8"
+## mysql version, only 8 is supported right now
 declare mysql_version="8"
 
 ## You can add or remove databases here :
@@ -29,7 +29,7 @@ apt-get upgrade -y
 
 # Install Some PPAs
 add-apt-repository ppa:ondrej/php -y
-curl -sL https://deb.nodesource.com/setup_16.x | sudo -E bash -
+curl -sL https://deb.nodesource.com/setup_18.x | sudo -E bash -
 
 # Update Package Lists again to get packages from ondrej and node repos
 apt-get update -y
@@ -69,17 +69,7 @@ do
 	php${version}-fpm php${version}-gd php${version}-gmp php${version}-imap php${version}-intl php${version}-xdebug \
 	php${version}-mbstring php${version}-mysql php${version}-opcache php${version}-readline \
 	php${version}-sqlite3 php${version}-xml php${version}-xsl php${version}-zip \
-	php${version}-imagick php${version}-memcached php${version}-redis
-
-  # ext-json is bundled starting with php8.0, so we only require it for older versions
-	if [ "$version" != "8.0" ] && [ "$version" != "8.1" ]; then
-	  apt-get install -y php${version}-json
-	fi
-
-  # Install mcrypt for php 7.0 and 7.1
-	if [ "$version" = "7.0" ] || [ "$version" = "7.1" ]; then
-    apt-get install -y php${version}-mcrypt
-  fi
+	php${version}-redis
 
 	# Set Some PHP CLI Settings by using search/replace with sed
 	sed -i "s/error_reporting = .*/error_reporting = E_ALL/" "/etc/php/$version/cli/php.ini"
@@ -92,17 +82,10 @@ do
   sed -i "s/listen\.owner.*/listen.owner = $me/" "/etc/php/$version/fpm/pool.d/www.conf"
   sed -i "s/;listen\.mode.*/listen.mode = 0666/" "/etc/php/$version/fpm/pool.d/www.conf"
 
-	# Xdebug configuration :
-	if [ "$version" = "7.0" ] || [ "$version" = "7.1" ]; then  # Xdebug 2 is used for php 7/7.1
-    echo "xdebug.remote_enable = 1" >> "/etc/php/$version/mods-available/xdebug.ini"
-    echo "xdebug.remote_host = $host_ip" >> "/etc/php/$version/mods-available/xdebug.ini"
-    echo "xdebug.remote_port = 9003" >> "/etc/php/$version/mods-available/xdebug.ini"
-	else # Xdebug 3 for php >= 7.2
-    echo "xdebug.mode = debug" >> "/etc/php/$version/mods-available/xdebug.ini"
-    echo "xdebug.client_host = $host_ip" >> "/etc/php/$version/mods-available/xdebug.ini"
-    echo "xdebug.client_port = 9003" >> "/etc/php/$version/mods-available/xdebug.ini"
-	fi
 
+  echo "xdebug.mode = debug" >> "/etc/php/$version/mods-available/xdebug.ini"
+  echo "xdebug.client_host = $host_ip" >> "/etc/php/$version/mods-available/xdebug.ini"
+  echo "xdebug.client_port = 9003" >> "/etc/php/$version/mods-available/xdebug.ini"
 	echo "xdebug.max_nesting_level = 512" >> "/etc/php/$version/mods-available/xdebug.ini"
 
 	sed -i "s/error_reporting = .*/error_reporting = E_ALL/" "/etc/php/$version/fpm/php.ini"
@@ -143,32 +126,8 @@ printf "\nPATH=\"$(sudo su - $me -c 'composer config -g home 2>/dev/null')/vendo
 ####################################
 #                MYSQL             #
 ####################################
-if [ $mysql_version = "8" ]; then
-  # Install MySQL
-  apt-get install -y mysql-server
-fi
-
-if [ $mysql_version = "5.7" ]; then
-  unset DEBIAN_FRONTEND # doesn't work with noninteractive frontend for some reason
-  #We'll still set the values, but the user will have to select "OK"
-  echo mysql-apt-config mysql-apt-config/unsupported-platform select "ubuntu bionic" | debconf-set-selections
-  echo mysql-apt-config mysql-apt-config/select-tools select "Disabled" | debconf-set-selections
-  echo mysql-apt-config mysql-apt-config/enable-repo select "mysql-5.7" | debconf-set-selections
-  echo mysql-apt-config mysql-apt-config/select-server select "mysql-5.7" | debconf-set-selections
-  echo mysql-apt-config mysql-apt-config/select-product select "Ok" | debconf-set-selections
-
-  # get mysql-apt-config 0.8.12. More recent versions install only MySQL 8.0
-  wget https://dev.mysql.com/get/mysql-apt-config_0.8.12-1_all.deb
-  dpkg -i mysql-apt-config_0.8.12-1_all.deb
-  apt-get update
-
-  # Reenable noninteractive frontent
-  export DEBIAN_FRONTEND=noninteractive
-  # Install versions 5.7
-  apt install -y -f mysql-client=5.7* mysql-community-server=5.7* mysql-server=5.7*
-  #And hold the package so that it won't install 8.0 on the first upate/upgrade
-  apt-mark hold mysql-client mysql-server mysql-community-server
-fi
+# Install MySQL
+apt-get install -y mysql-server
 
 service mysql stop
 
@@ -224,7 +183,7 @@ apt-get install -y nodejs
 apt-get install -y sqlite3 libsqlite3-dev
 
 # Install memcached
-apt-get install -y memcached
+#apt-get install -y memcached
 
 # Install Redis
 apt-get install -y redis-server
