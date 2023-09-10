@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 ## You can add older/newer PHP versions here :
-declare -a php_versions=("8.1")
+declare -a php_versions=("8.2")
 
 ## mysql version, only 8 is supported right now
 declare mysql_version="8"
@@ -39,7 +39,7 @@ apt-get purge -y apparmor
 # Update System Packages
 apt-get upgrade -y
 
-# Install Some PPAs
+# Add Odrej's PHP PPA
 add-apt-repository ppa:ondrej/php -y
 
 # Add NodeJS PPA
@@ -82,11 +82,10 @@ a2enmod proxy proxy_fcgi proxy_http ssl rewrite headers actions alias
 for version in "${php_versions[@]}"
 do
 	apt-get install -y \
-	php${version} php${version}-bcmath php${version}-bz2 php${version}-cgi php${version}-cli php${version}-common php${version}-curl php${version}-dev \
+	php${version} php${version}-bcmath php${version}-bz2 php${version}-cgi php${version}-cli php${version}-common php${version}-curl  \
 	php${version}-fpm php${version}-gd php${version}-gmp php${version}-imap php${version}-intl php${version}-xdebug \
 	php${version}-mbstring php${version}-mysql php${version}-opcache php${version}-readline \
-	php${version}-sqlite3 php${version}-xml php${version}-xsl php${version}-zip \
-	php${version}-redis
+	php${version}-sqlite3 php${version}-xml php${version}-xsl php${version}-zip php${version}-redis
 
 	# Set Some PHP CLI Settings by using search/replace with sed
 	sed -i "s/error_reporting = .*/error_reporting = E_ALL/" "/etc/php/$version/cli/php.ini"
@@ -254,7 +253,7 @@ mkdir /var/www/orchard
 cp "$current_dir/../resources/welcome.php" "/var/www/orchard/index.php"
 bash /home/"$me"/scripts/create-certificate.sh orchard.test
 bash /home/"$me"/scripts/update-hosts.sh orchard.test
-bash /home/"$me"/scripts/apache.sh orchard.test /var/www/orchard/ 8.1
+bash /home/"$me"/scripts/apache.sh orchard.test /var/www/orchard/ 8.2
 
 # Make user part of www-data group and owner of /var/www so that we can set permissions to 775
 # on directories that need to be writable by apache (like ./storage or ./bootstrap/cache)
