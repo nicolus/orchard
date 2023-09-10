@@ -52,8 +52,7 @@ echo "deb [signed-by=/etc/apt/keyrings/nodesource.gpg] https://deb.nodesource.co
 apt-get update -y
 
 # Install Some Basic Packages
-apt-get install -y dos2unix git libmcrypt4 libpcre3-dev libpng-dev chrony unzip make \
-supervisor unattended-upgrades whois pv cifs-utils mcrypt imagemagick
+apt-get install -y dos2unix git libmcrypt4 libpcre3-dev libpng-dev unzip supervisor whois
 
 # Set My Timezone to UTC
 ln -sf /usr/share/zoneinfo/UTC /etc/localtime
