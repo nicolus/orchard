@@ -189,12 +189,13 @@ apt-get install -y sqlite3 libsqlite3-dev
 apt-get install -y redis-server
 service redis-server start
 
-# Install & Configure MailHog
-wget --quiet -O /usr/local/bin/mailhog https://github.com/mailhog/MailHog/releases/download/v1.0.1/MailHog_linux_amd64
-chmod +x /usr/local/bin/mailhog
+# Install & Configure Mailpit
+wget --quiet -O /tmp/mailpit.gz https://github.com/axllent/mailpit/releases/download/v1.8.4/mailpit-linux-amd64.tar.gz
+tar -zxvf /tmp/mailpit.gz mailpit -C /usr/local/bin/
+chmod +x /usr/local/bin/mailpit
 
-# Configure Supervisor for mailhog
-cp "$current_dir/../resources/mailhog.conf" "/etc/supervisor/conf.d/"
+# Configure Supervisor for mailpit
+cp "$current_dir/../resources/mailpit.conf" "/etc/supervisor/conf.d/"
 
 #start supervisor :
 service supervisor start
@@ -225,11 +226,11 @@ echo "%sudo ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
 apt-get -y autoremove;
 apt-get -y clean;
 
-# Install the mailhog site
-bash /home/"$me"/scripts/create-certificate.sh mailhog.test
-cp "$current_dir/../resources/mailhog.test.conf" "/etc/apache2/sites-available/"
-a2ensite mailhog.test
-bash /home/"$me"/scripts/update-hosts.sh mailhog.test
+# Install the mailpit site
+bash /home/"$me"/scripts/create-certificate.sh mailpit.test
+cp "$current_dir/../resources/mailpit.test.conf" "/etc/apache2/sites-available/"
+a2ensite mailpit.test
+bash /home/"$me"/scripts/update-hosts.sh mailpit.test
 
 # Install a welcome page :
 mkdir /var/www/orchard
