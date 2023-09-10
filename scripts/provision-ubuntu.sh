@@ -24,8 +24,17 @@ export DEBIAN_FRONTEND=noninteractive
 # Update Package List
 apt-get update
 
-# Remove desktop components
-apt-get autoremove -y x11-common
+# Remove Snapd to save some space and resources
+snap remove ubuntu-desktop-installer
+snap remove gtk-common-themes
+snap remove core22
+snap remove bare
+snap remove snapd
+apt-get purge -y snapd
+
+# Remove Apparmor to avoid potential headaches in local dev environment (never do that in production)
+apt-get purge -y apparmor
+
 
 # Update System Packages
 apt-get upgrade -y
