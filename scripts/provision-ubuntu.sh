@@ -9,6 +9,9 @@ declare mysql_version="8"
 ## You can add or remove databases here :
 declare -a databases=("laravel")
 
+## NodeJS version you want to install
+declare NODE_MAJOR=18
+
 declare me=$1
 declare current_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && /bin/pwd)"
 declare host_ip="$(tail -1 /etc/resolv.conf | cut -d' ' -f2)"
@@ -29,7 +32,12 @@ apt-get upgrade -y
 
 # Install Some PPAs
 add-apt-repository ppa:ondrej/php -y
-curl -sL https://deb.nodesource.com/setup_18.x | sudo -E bash -
+
+# Add NodeJS PPA
+apt-get install -y ca-certificates curl gnupg
+mkdir -p /etc/apt/keyrings
+curl -fsSL https://deb.nodesource.com/gpgkey/nodesource-repo.gpg.key | sudo gpg --dearmor -o /etc/apt/keyrings/nodesource.gpg
+echo "deb [signed-by=/etc/apt/keyrings/nodesource.gpg] https://deb.nodesource.com/node_$NODE_MAJOR.x nodistro main" | sudo tee /etc/apt/sources.list.d/nodesource.list
 
 # Update Package Lists again to get packages from ondrej and node repos
 apt-get update -y
