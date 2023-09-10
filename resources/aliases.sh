@@ -3,7 +3,7 @@ alias ...="cd ../.."
 
 alias h='cd ~'
 alias c='clear'
-alias art=artisan
+alias art='artisan'
 alias tkr='php artisan tinker'
 
 alias phpspec='vendor/bin/phpspec'
@@ -11,7 +11,6 @@ alias phpunit='vendor/bin/phpunit'
 
 alias xoff='sudo phpdismod xdebug && php-restart'
 alias xon='sudo phpenmod xdebug && php-restart'
-
 
 function artisan() {
     php artisan "$@"
@@ -28,36 +27,6 @@ function php-restart() {
   done
 }
 
-function php70() {
-    sudo update-alternatives --set php /usr/bin/php7.0
-    sudo update-alternatives --set php-config /usr/bin/php-config7.0
-    sudo update-alternatives --set phpize /usr/bin/phpize7.0
-}
-
-function php71() {
-    sudo update-alternatives --set php /usr/bin/php7.1
-    sudo update-alternatives --set php-config /usr/bin/php-config7.1
-    sudo update-alternatives --set phpize /usr/bin/phpize7.1
-}
-
-function php72() {
-    sudo update-alternatives --set php /usr/bin/php7.2
-    sudo update-alternatives --set php-config /usr/bin/php-config7.2
-    sudo update-alternatives --set phpize /usr/bin/phpize7.2
-}
-
-function php73() {
-    sudo update-alternatives --set php /usr/bin/php7.3
-    sudo update-alternatives --set php-config /usr/bin/php-config7.3
-    sudo update-alternatives --set phpize /usr/bin/phpize7.3
-}
-
-function php74() {
-    sudo update-alternatives --set php /usr/bin/php7.4
-    sudo update-alternatives --set php-config /usr/bin/php-config7.4
-    sudo update-alternatives --set phpize /usr/bin/phpize7.4
-}
-
 function php80() {
     sudo update-alternatives --set php /usr/bin/php8.0
     sudo update-alternatives --set php-config /usr/bin/php-config8.0
@@ -70,6 +39,17 @@ function php81() {
     sudo update-alternatives --set phpize /usr/bin/phpize8.1
 }
 
+function php82() {
+    sudo update-alternatives --set php /usr/bin/php8.2
+    sudo update-alternatives --set php-config /usr/bin/php-config8.2
+    sudo update-alternatives --set phpize /usr/bin/phpize8.2
+}
+
+function php83() {
+    sudo update-alternatives --set php /usr/bin/php8.3
+    sudo update-alternatives --set php-config /usr/bin/php-config8.3
+    sudo update-alternatives --set phpize /usr/bin/phpize8.3
+}
 
 function serve() {
     if [[ "$1" && "$2" ]]
@@ -85,7 +65,6 @@ function serve() {
         echo "  serve domain path [phpversion]"
     fi
 }
-
 
 function share() {
     if [[ "$1" ]]
@@ -113,20 +92,10 @@ function xphp() {
 
     HOST_IP=$(hostip)
 
-    if (php -v | grep -q "PHP 7.[01]")
-    then
-      # php 7.0 or 7.1 => Xdebug 2
-      php \
-        -dxdebug.remote_host=${HOST_IP} \
-        -dxdebug.remote_autostart=1 \
-        "$@"
-    else
-      # php 7.2 or higher => Xdebug 3
-      php \
-        -dxdebug.client_host=${HOST_IP} \
-        -dxdebug.start_with_request=1 \
-        "$@"
-    fi
+    php \
+      -dxdebug.client_host=${HOST_IP} \
+      -dxdebug.start_with_request=1 \
+      "$@"
 
     if ! $XDEBUG_ENABLED; then xoff; fi
 }
