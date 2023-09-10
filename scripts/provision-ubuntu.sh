@@ -142,7 +142,7 @@ printf "\nPATH=\"$(sudo su - $me -c 'composer config -g home 2>/dev/null')/vendo
 #                MYSQL             #
 ####################################
 # Install MySQL
-apt-get install -y mysql-server
+apt-get install -y --no-install-recommends mysql-server
 
 service mysql stop
 
