@@ -1,21 +1,20 @@
 #!/usr/bin/env bash
 
-## You can add older/newer PHP versions here :
+## You can add older/newer PHP versions here,
+## eg : declare -a php_versions=("8.1" "8.2" "8.3")
 declare -a php_versions=("8.2")
 
-## mysql version, only 8 is supported right now
-declare mysql_version="8"
-
 ## You can add or remove databases here :
+## eg : declare -a databases=("laravel" "test_database")
 declare -a databases=("laravel")
 
+
 ## NodeJS version you want to install
-declare NODE_MAJOR=18
+NODE_MAJOR="18"
 
-declare me=$1
-declare current_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && /bin/pwd)"
-declare host_ip="$(tail -1 /etc/resolv.conf | cut -d' ' -f2)"
-
+me=$1
+current_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && /bin/pwd)"
+host_ip="$(tail -1 /etc/resolv.conf | cut -d' ' -f2)"
 
 echo "installing for user $me"
 
@@ -221,8 +220,8 @@ unzip ngrok-stable-linux-amd64.zip -d /usr/local/bin
 rm -rf ngrok-stable-linux-amd64.zip
 
 # Clean Up
-apt -y autoremove
-apt -y clean
+apt-get -y autoremove
+apt-get -y clean
 chown -R "$me:$me" "/home/$me"
 chown -R "$me:$me" /usr/local/bin
 
@@ -232,7 +231,7 @@ cp -r "$current_dir/../scripts/" "/home/$me/"
 
 # Move the start.sh script and change permissions to make it executable
 mv "/home/$me/scripts/start.sh" /usr/bin/start
-chmod /usr/bin/start 755
+chmod 755 /usr/bin/start
 
 # Allow using sudo without entering a password
 echo "%sudo ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
