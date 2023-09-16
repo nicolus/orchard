@@ -34,7 +34,6 @@ apt-get purge -y snapd
 # Remove Apparmor to avoid potential headaches in local dev environment (never do that in production)
 apt-get purge -y apparmor
 
-
 # Update System Packages
 apt-get upgrade -y
 
@@ -45,7 +44,7 @@ add-apt-repository ppa:ondrej/php -y
 apt-get install -y ca-certificates curl gnupg
 mkdir -p /etc/apt/keyrings
 curl -fsSL https://deb.nodesource.com/gpgkey/nodesource-repo.gpg.key | sudo gpg --dearmor -o /etc/apt/keyrings/nodesource.gpg
-echo "deb [signed-by=/etc/apt/keyrings/nodesource.gpg] https://deb.nodesource.com/node_$NODE_MAJOR.x nodistro main" | sudo tee /etc/apt/sources.list.d/nodesource.list
+echo "deb [signed-by=/etc/apt/keyrings/nodesource.gpg] https://deb.nodesource.com/node_$NODE_MAJOR.x nodistro main" |  tee /etc/apt/sources.list.d/nodesource.list
 
 # Update Package Lists again to get packages from ondrej and node repos
 apt-get update -y
@@ -208,7 +207,7 @@ service redis-server start
 
 # Install & Configure Mailpit
 wget --quiet -O /tmp/mailpit.gz https://github.com/axllent/mailpit/releases/download/v1.8.4/mailpit-linux-amd64.tar.gz
-tar -zxvf /tmp/mailpit.gz mailpit -C /usr/local/bin/
+tar -zxvf /tmp/mailpit.gz -C /usr/local/bin/
 chmod +x /usr/local/bin/mailpit
 
 # Configure Supervisor for mailpit
