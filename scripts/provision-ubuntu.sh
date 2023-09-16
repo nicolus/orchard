@@ -8,7 +8,6 @@ declare -a php_versions=("8.2")
 ## eg : declare -a databases=("laravel" "test_database")
 declare -a databases=("laravel")
 
-
 ## NodeJS version you want to install
 NODE_MAJOR="18"
 
