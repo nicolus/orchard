@@ -56,6 +56,9 @@ apt-get install -y dos2unix git libmcrypt4 libpcre3-dev libpng-dev unzip supervi
 # Set My Timezone to UTC
 ln -sf /usr/share/zoneinfo/UTC /etc/localtime
 
+# Share .ssh directory between windows and linux :
+echo "$SSH_PATH /home/$me/.ssh drvfs rw,noatime,uid=1000,gid=1000,case=off,umask=0077,fmask=0177 0 0" | tee /etc/fstab
+
 
 ####################################
 #             APACHE 2             #
