@@ -9,7 +9,7 @@ declare -a php_versions=("8.2")
 declare -a databases=("laravel")
 
 ## NodeJS version you want to install
-NODE_MAJOR="18"
+NODE_MAJOR="20"
 
 me=$1
 current_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && /bin/pwd)"
