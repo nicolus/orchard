@@ -205,7 +205,7 @@ apt-get install -y redis-server
 service redis-server start
 
 # Install & Configure Mailpit
-wget --quiet -O /tmp/mailpit.gz https://github.com/axllent/mailpit/releases/download/v1.8.4/mailpit-linux-amd64.tar.gz
+wget --quiet -O /tmp/mailpit.gz https://github.com/axllent/mailpit/releases/download/v1.10.0/mailpit-linux-amd64.tar.gz
 tar -zxvf /tmp/mailpit.gz -C /usr/local/bin/
 chmod +x /usr/local/bin/mailpit
 
