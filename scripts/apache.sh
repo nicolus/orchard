@@ -61,11 +61,11 @@ service apache2 reload
 service php"$php_version"-fpm stop
 service php"$php_version"-fpm start
 
-echo -e "\033[0;32m\xE2\x9C\x94 Domain  \033[0;34m$domain\033[0;32m is now up !\033[0m"
+echo -e " \033[0;32m\xE2\x9C\x94 Domain \033[0;34m$domain\033[0;32m is now up !\033[0m"
 
 WINHOSTSFILE="/mnt/c/Windows/System32/drivers/etc/hosts";
 if test -f "$WINHOSTSFILE"; then
-  if ! grep -qE "^127.0.0.1[[:space:]]+$domain" $WINHOSTSFILE; then
+  if ! grep -qE "^[[:space:]]*127.0.0.1[[:space:]]+$domain" $WINHOSTSFILE; then
     echo -e "\033[0;33mThis domain was not found in your Windows hosts file, you will need to add these lines to access the site :\033[0m"
     echo "127.0.0.1 $domain"
     echo "::1 $domain"
