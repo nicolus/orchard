@@ -258,7 +258,7 @@ mkdir /var/www/orchard
 cp "$current_dir/../resources/welcome.php" "/var/www/orchard/index.php"
 bash /home/"$me"/scripts/create-certificate.sh orchard.test
 bash /home/"$me"/scripts/update-hosts.sh orchard.test
-bash /home/"$me"/scripts/apache.sh orchard.test /var/www/orchard/ 8.2
+bash /home/"$me"/scripts/apache.sh orchard.test /var/www/orchard/ 8.3
 
 # Make user part of www-data group and owner of /var/www so that we can set permissions to 775
 # on directories that need to be writable by apache (like ./storage or ./bootstrap/cache)
