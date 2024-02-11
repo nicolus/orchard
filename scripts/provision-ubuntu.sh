@@ -88,7 +88,7 @@ do
 
 	# Set Some PHP CLI Settings by using search/replace with sed
 	sed -i "s/error_reporting = .*/error_reporting = E_ALL/" "/etc/php/$version/cli/php.ini"
-	sed -i "s/display_errors = .*/display_errors = On/" "etc/php/$version/cli/php.ini"
+	sed -i "s/display_errors = .*/display_errors = On/" "/etc/php/$version/cli/php.ini"
 	sed -i "s/memory_limit = .*/memory_limit = 512M/" "/etc/php/$version/cli/php.ini"
 	sed -i "s/;date.timezone.*/date.timezone = UTC/" "/etc/php/$version/cli/php.ini"
 
