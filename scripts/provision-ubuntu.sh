@@ -114,8 +114,14 @@ do
 	echo "[openssl]" >> "/etc/php/$version/fpm/php.ini"
 	echo "openssl.cainfo = /etc/ssl/certs/ca-certificates.crt" >> "/etc/php/$version/fpm/php.ini"
 
+	echo "[openssl]" >> "/etc/php/$version/cli/php.ini"
+  echo "openssl.cainfo = /etc/ssl/certs/ca-certificates.crt" >> "/etc/php/$version/cli/php.ini"
+
 	echo "[curl]" >> "/etc/php/$version/fpm/php.ini"
 	echo "curl.cainfo = /etc/ssl/certs/ca-certificates.crt" >> "/etc/php/$version/fpm/php.ini"
+
+  echo "[curl]" >> "/etc/php/$version/cli/php.ini"
+  echo "curl.cainfo = /etc/ssl/certs/ca-certificates.crt" >> "/etc/php/$version/fpm/php.ini"
 
 	# set php, php-config, phpize to aliases of phpX.Y
 	# We're installing all php versions in order, so we'll be left with the latest one active :
