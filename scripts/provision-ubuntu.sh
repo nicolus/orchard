@@ -11,6 +11,7 @@ declare -a databases=("laravel")
 ## NodeJS version you want to install
 NODE_MAJOR="20"
 
+## Variables we will need to provision : current user, current dir and host ip (IP of the host windows seen from WSL)
 me=$1
 current_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && /bin/pwd)"
 host_ip="$(tail -1 /etc/resolv.conf | cut -d' ' -f2)"
@@ -54,7 +55,7 @@ apt-get install -y dos2unix git libmcrypt4 libpcre3-dev libpng-dev unzip supervi
 # Set My Timezone to UTC
 ln -sf /usr/share/zoneinfo/UTC /etc/localtime
 
-# Share .ssh directory between windows and linux :
+# Share .ssh directory between windows and linux so we can use the same keys for git etc.
 echo "$SSH_PATH /home/$me/.ssh drvfs rw,noatime,uid=1000,gid=1000,case=off,umask=0077,fmask=0177 0 0" | tee /etc/fstab
 
 
