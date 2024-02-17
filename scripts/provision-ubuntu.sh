@@ -2,7 +2,7 @@
 
 ## You can add older/newer PHP versions here,
 ## eg : declare -a php_versions=("8.1" "8.2" "8.3")
-declare -a php_versions=("8.3")
+declare -a php_versions=("8.0" "8.1" "8.2" "8.3")
 
 ## You can add or remove databases here :
 ## eg : declare -a databases=("laravel" "test_database")
@@ -124,11 +124,9 @@ do
   echo "[curl]" >> "/etc/php/$version/cli/php.ini"
   echo "curl.cainfo = /etc/ssl/certs/ca-certificates.crt" >> "/etc/php/$version/fpm/php.ini"
 
-	# set php, php-config, phpize to aliases of phpX.Y
+	# set php to aliases of phpX.Y
 	# We're installing all php versions in order, so we'll be left with the latest one active :
 	update-alternatives --set php "/usr/bin/php$version"
-	update-alternatives --set php-config "/usr/bin/php-config$version"
-	update-alternatives --set phpize "/usr/bin/phpize$version"
 done
 
 # Disable XDebug On The CLI (can still be used with 'xphp')
