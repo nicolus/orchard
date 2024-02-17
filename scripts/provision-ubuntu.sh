@@ -211,9 +211,7 @@ apt-get install -y redis-server
 service redis-server start
 
 # Install & Configure Mailpit
-wget --quiet -O /tmp/mailpit.gz https://github.com/axllent/mailpit/releases/download/v1.10.0/mailpit-linux-amd64.tar.gz
-tar -zxvf /tmp/mailpit.gz -C /usr/local/bin/
-chmod +x /usr/local/bin/mailpit
+sudo bash < <(curl -sL https://raw.githubusercontent.com/axllent/mailpit/develop/install.sh)
 
 # Configure Supervisor for mailpit
 cp "$current_dir/../resources/mailpit.conf" "/etc/supervisor/conf.d/"
