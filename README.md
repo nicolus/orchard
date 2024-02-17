@@ -7,16 +7,17 @@
 
 ## What is this ?
 
-Orchard is a provisioning script that makes it really fast and easy to install a full LAMP stack on windows 10 with Ubuntu 20.04 on WSL2. It will install and configure the following :
+Orchard is a provisioning script that makes it really fast and easy to install a full LAMP stack on windows 10/11 with Ubuntu 22.04 on WSL2. It will install and configure the following :
 
 * Apache 2
-* PHP 7.0, 7.1, 7.2, 7.3, 7.4, 8.0 and 8.1
+* PHP 8.0, 8.1, 8.2 and 8.3
 * MySQL 8.0
 * Redis
 * Memcache
 * ngrok
-* Mailhog
+* Mailpit
 * SSL certificates
+* Shared SSH keys between windows and WSL
 
 It borrows a lot from laravel/settler and laravel/homestead.
 
@@ -26,14 +27,12 @@ It borrows a lot from laravel/settler and laravel/homestead.
 
 * Windows 10 version 2004 or later
 * [WSL2](https://docs.microsoft.com/windows/wsl/about)
-* A fresh install of [Ubuntu 20.04 for WSL](https://www.microsoft.com/en-us/p/ubuntu-2004-lts/9n6svws3rx71?activetab=pivot:overviewtab)
-* I also recommend you install [Windows Terminal](https://github.com/microsoft/terminal) because it's really good ;-)
+* A fresh install of [Ubuntu 22.04 for WSL](https://apps.microsoft.com/detail/9PN20MSR04DW?hl=fr-fr&gl=FR)
+* I also recommend you install [Windows Terminal](https://apps.microsoft.com/detail/9N0DX20HK701) because it's really good ;-)
 
 ## Installation
 
-Download this repo somewhere (let's assume `C:\orchard\ `)
-
-Install Ubuntu 20.04 with a username (not just `root`) and start it by typing `ubuntu` in the command line
+Install Ubuntu 22.04 with a username (not just `root`) and start it by typing `ubuntu` in the command line
 
 Add the following lines to your hosts file (C:\Windows\System32\drivers\etc\hosts) so that you'll be able to access the default orchard websites, you can also add any site you know you'll want to create in orchard. :
 ```
@@ -41,29 +40,16 @@ Add the following lines to your hosts file (C:\Windows\System32\drivers\etc\host
 ::1 orchard.test
 
 127.0.0.1 mailhog.test
-::1 mailhog.test
+::1 mailpit.test
 ```
 
-Inside Ubuntu, navigate to where you downloaded the repo : 
-```shell script
-$ cd /mnt/c/orchard
-```
-
-Launch the install script :
-```shell script
-$ ./install.sh
-```
+Download this repository somewhere and double click the `install.bat` file in the root directory. 
 
 It will then prompt you to enter your password to gain sudo access and proceed to install everything you need.
 
 If you don't see anything going wrong in the logs, it means Orchard is now installed, congratulations ! (it should even have opened a test page in your browser).
 
-Reload the bash_aliases (or you can log off and on again from wsl) :
-```
-$ source ~/.bash_aliases
-```
-
-You can now install the Root certificate located in `\\wsl$\Ubuntu\etc\apache2\ssl\ca.orchard.YOUR-MACHINE-NAME.crt` in Chrome and Firefox so that your sites will work without warning in https.
+You can now install the Root certificate located in `\\wsl$\Ubuntu\etc\apache2\ssl\ca.orchard.YOUR-MACHINE-NAME.crt` in Chrome and Firefox so that your sites will in https without any warning.
 
 
 ## Usage
@@ -75,20 +61,21 @@ Serve a website from a directory (don't forget to make the domain point to 127.0
 $ serve /var/www/mysite mysite.test 
 ```
 
-It will use php 8.1 by default, but you can specify an older version :
+It will use php 8.3 by default, but you can specify an older version :
 ```shell script
-$ serve /var/www/mysite mysite.test 7.4
+$ serve /var/www/mysite mysite.test 8.1
 ```
 
 Change the current php version used in CLI
 ```shell script
-$ php74
+$ php81
 ```
 
 Launch a command line script with xdebug :
 ```shell script
 $ xphp script.php
 ```
+
 Get the IP of the host machine from WSL :
 ```shell script
 $ hostip
@@ -98,4 +85,3 @@ Share a site with ngrok :
 ```shell script
 $ share mysite.test
 ```
-
