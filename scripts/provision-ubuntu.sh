@@ -31,6 +31,9 @@ snap remove bare
 snap remove snapd
 apt-get purge -y snapd
 
+# Remove not so useful packages :
+apt-get purge -y command-not-found friendly-recovery
+
 # Remove Apparmor to avoid potential headaches in local dev environment (never do that in production)
 apt-get purge -y apparmor
 
@@ -185,10 +188,8 @@ for db in "${databases[@]}"; do
   mysql --user="root" -e "CREATE DATABASE $db character set UTF8mb4 collate utf8mb4_unicode_ci;"
 done
 
-
 # Add Timezone Support To MySQL
 mysql_tzinfo_to_sql /usr/share/zoneinfo | mysql --user=root
-
 
 
 
@@ -211,10 +212,8 @@ service redis-server start
 
 # Install & Configure Mailpit
 sudo bash < <(curl -sL https://raw.githubusercontent.com/axllent/mailpit/develop/install.sh)
-
 # Configure Supervisor for mailpit
 cp "$current_dir/../resources/mailpit.conf" "/etc/supervisor/conf.d/"
-
 #start supervisor :
 service supervisor start
 
@@ -226,6 +225,15 @@ rm -rf ngrok-stable-linux-amd64.zip
 # Clean Up
 apt-get -y autoremove
 apt-get -y clean
+# Remove docs
+rm -rf /usr/share/doc/*
+# Remove caches
+find /var/cache -type f -exec rm -rf {} \;
+# delete logs
+find /var/log/ -name "*.log" -exec rm -f {} \;
+
+
+# Make sure we own everything !
 chown -R "$me:$me" "/home/$me"
 chown -R "$me:$me" /usr/local/bin
 
