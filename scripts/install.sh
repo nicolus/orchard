@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 me=$(whoami)
-echo "Hello $me, we'll now ask you for sudo permission to install stuff $SSH_PATH"
+echo "Hello $me, we'll now ask you for sudo permission to install stuff"
 
 sudo SSH_PATH="$SSH_PATH" bash ./scripts/provision-ubuntu.sh ${me}
 
